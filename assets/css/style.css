@@ -1,0 +1,35 @@
+body {
+	
+	background-color: #e0ed89;
+	background: url("https://image.shutterstock.com/z/stock-photo-paris-france-december-interior-of-gare-de-l-est-paris-est-train-station-with-apple-300037370.jpg");
+	background background-repeat: no-repeat;
+	background-size: cover;
+
+}
+th {
+	font-size: 20px;
+	text-align: center;
+	background-color: #96c8a2;
+}
+.panel-heading, h4 {
+	font-size: 30px;
+	text-align: center;
+	background-color: #f36464;
+}
+td {
+	text-align: center;
+}
+label {
+	font-size: 16px;
+}
+.jumbotron, #submitButton {
+	background-color: #d9ebdd;
+}
+button {
+	font-size: 20px;
+	text-align: center;
+}
+button:hover {
+	background-color: #e5d9e0;
+	text-transform: uppercase;
+}
