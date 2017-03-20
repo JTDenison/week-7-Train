@@ -8,28 +8,32 @@ $(document).ready(function() {
     };
     firebase.initializeApp(config);
 
+    var name = '';
+    var destination = '';
+    var firstTime = '';
+    var frequency = '';
+
     var database = firebase.database();
     //button for adding trains
     $('#submitButton').on('click', function(event) {
         event.preventDefault();
 
         //gets user input
-        var trainName = $('#trainNameInput').val().trim();
-        var destination = $('#destinationInput').val().trim();
-        var firstTime = moment($('#timeInput').val().trim(), "HH:mm").format("");
-        var frequency = $('#frequencyInput').val().trim();
-
-        //creates frebase holder for train times
+        var trainName = $('#trainNameInput').val();
+        var destination = $('#destinationInput').val();
+        var firstTime = $("#timeInput").val();
+        var frequency = $('#frequencyInput').val();
 
         //push data to the database
-        database.ref().push({
+
+        var newTrain = {
             name: trainName,
-            tdestination: destination,
-            tFirst: firstTime,
-            tfreq: frequency,
-        });
+            destination: destination,
+            firstTime: firstTime,
+            frequency: frequency,
+        };
 
-
+        database.ref().push(newTrain);
 
         // console.log(newTrains.name);
         // console.log(newTrains.tdestination);
@@ -43,48 +47,56 @@ $(document).ready(function() {
         $('#frequencyInput').val("");
 
         //dont let user submit empty form
+        // Prevents moving to new page
         return false;
     });
 
-    //when a new item is added (child) do this function
+    // New train function childsnap, prevchildkey
     database.ref().on("child_added", function(childSnapshot, prevChildKey) {
         var trainName = childSnapshot.val().name;
-        var destination = childSnapshot.val().tdestination;
-        var firstTime = childSnapshot.val().tFirst;
-        var frequency = childSnapshot.val().tfreq;
+        var destination = childSnapshot.val().destination;
+        var firstTime = childSnapshot.val().firstTime;
+        var tFrequency = childSnapshot.val().frequency;
+
+
+
         // console.log(trainName);
         // console.log(destination);
         // console.log(firstTime);
-        // console.log(frequency);
+        // console.log(tFrequency);
 
-        //convert first time (push back 1 year to make sure it comes before current time)
-        var firstTimeConverted = moment(firstTime, "HH:mm").subtract(1, "years");
-        // console.log(firstTimeConverted);
 
-        //current time
+
+        // shit not working below....
         var currentTime = moment();
-        // console.log(currenTime);
+
+
+
+        var firstTimeConverted = moment(firstTime, "hh:mm").subtract(1, "years");
+        // console.log(firstTimeConverted);
 
         //difference between the times
         var diffTime = moment().diff(moment(firstTimeConverted), "minutes");
         // console.log(diffTime);
 
-        //minute until train
-        var tMinutesTillTrain = frequency - tRemainder;
+        //minutes until train
+        var tMinutesTillTrain = tFrequency - tRemainder;
+
         // console.log(tMinutesTillTrain);
 
         //time apart (remainder)
-        var tRemainder = diffTime % frequency;
+
+        var tRemainder = diffTime % tFrequency;
         // console.log(tRemainder);
 
         //next train
-        var nextTrain = moment().add(tMinutesTillTrain,"minutes");
+        var nextTrain = moment().add(tMinutesTillTrain, "minutes");
         var nextTrainConverted = moment(nextTrain).format("hh:mm a");
 
         //add each trains data into the table
         $("#trainTable > tbody").append("<tr><td>" + trainName + "</td><td>" +
-            destination + "</td><td>" + "Every " + frequency + " minutes" +
-            "</td><td>" + nextTrainConverted + "</td><td>" + tMinutesTillTrain +
+            destination + "</td><td>" + "Every " + tFrequency + " minutes" +
+            "</td><td>" + nextTrainConverted + "</td><td>" + firstTime +
             "</td></tr>");
 
     });
